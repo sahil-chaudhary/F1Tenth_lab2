@@ -15,29 +15,56 @@ class SafetyNode(Node):
     """
     def __init__(self):
         super().__init__('safety_node')
-        """
-        One publisher should publish to the /drive topic with a AckermannDriveStamped drive message.
+        #Create a Publisher to send commands to the car for emergency braking
+        self.drive_pub = self.create_publisher(AckermannDriveStamped, '/drive', 10)
 
-        You should also subscribe to the /scan topic to get the LaserScan messages and
-        the /ego_racecar/odom topic to get the current speed of the vehicle.
+        #Create a Subscriber to subscribe /scan topic to recieve the laser scan data
+        #Also, use the scan_callback method to process the data
+        self.scan_sub = self.create_subscription(LaserScan, '/scan', self.scan_callback, 10)
 
-        The subscribers should use the provided odom_callback and scan_callback as callback methods
+        #Subscribe to the /ego_racecar/odom topic to get the current speed of the vehicle
+        #Also, use the odom_callback method to process the data
+        self.odom_sub = self.create_subscription(Odometry, '/ego_racecar/odom', self.odom_callback, 10)
 
-        NOTE that the x component of the linear velocity in odom is the speed
-        """
-        self.speed = 0.
-        # TODO: create ROS subscribers and publishers.
+        #Initialize the speed of the vehicle to zero
+        self.speed = 0.0
+        
+        #Define the threshold for minimum iTTC(Time to collision)
+        self.min_ttc = 0.5
 
     def odom_callback(self, odom_msg):
-        # TODO: update current speed
-        self.speed = 0.
+        """The function updates the current speed of the car based on the odom message received"""
+        self.speed = odom_msg.twist.twist.linear.x
 
     def scan_callback(self, scan_msg):
-        # TODO: calculate TTC
-        
-        # TODO: publish command to brake
-        pass
+        """This function calculates the time to collision(TTC) based on the laser scan data and triggers emergency braking if TTC is less than the threshold"""
 
+        #Get the range data from the laser scan
+        ranges = scan_msg.ranges
+
+        #Get the minimum range from the laser scan data
+        min_range = min(ranges)
+
+        #Calculate the time to collision based on the minimum range and current speed of the vehicle
+        ttc = min_range / self.speed
+
+        #If the time to collision is less than the threshold, trigger emergency braking
+        if ttc < self.min_ttc:
+            self.get_logger().info("Emergency Braking Triggered")
+            self.emergency_brake()
+
+    def emergency_brake(self):
+        """This function sends the command to the car to stop the vehicle immediately"""
+        #Create an AckermannDriveStamped message to stop the vehicle
+        stop_msg = AckermannDriveStamped()
+        stop_msg.header.stamp = self.get_clock().now().to_msg()
+        stop_msg.header.frame_id = 'base_link'
+        stop_msg.drive.steering_angle = 0.0
+        stop_msg.drive.speed = 0.0
+
+        #Publish the stop message to the drive topic
+        self.drive_pub.publish(stop_msg)
+        
 def main(args=None):
     rclpy.init(args=args)
     safety_node = SafetyNode()
