@@ -1,4 +1,13 @@
+## Contributors:
+1. Sahil Chaudhary
+
 # Lab 2: Automatic Emergency Braking
+I have been covering lectures on F1Tenth under the supervision of Prof. Pushpak Jagtap, RBCCPS. You might think why this is lab 2 and not lab 1, the reason is simple, lab 1 included the interaction of me with ros and docker and it just didn't make sense to me for uploading the solution on github for people.
+
+Also, Please note that the repo is just inspired from https://github.com/f1tenth/f1tenth_lab2_template and my contributions to this includes:
+1. Solution 
+2. Video for showing how it works
+3. Instructions to reproduce the results and see the simulations on their own
 
 ## I. Learning Goals
 
@@ -56,25 +65,14 @@ Note the following topic names for your publishers and subscribers:
 - `Odometry`: /ego_racecar/odom, specifically, the longitudinal velocity of the vehicle can be found in `twist.twist.linear.x`
 - `AckermannDriveStamped`: /drive
 
-## V: Deliverables and Submission
-You can implement this node in either C++ or Python. A skeleton package is already provided in the repo that you can use. If you're using docker, develop **directly in the simulation container** provided, and put your package in `/sim_ws/src` alongside the simulation package.
-When following the instruction in the simulation repo, the repo directory will be mounted to the sim container. You can also add extra volumes mounted for your convenience when editing the files. For example, if you're using the `rocker` tool:
+## Deliverables
 
-```bash
-rocker --nvidia --x11 --volume .:/sim_ws/src/f1tenth_gym_ros --volume <path_to_your_package_on_host>:/sim_ws/src/safety_node -- f1tenth_gym_ros
-```
+**Deliverable 1**: I have updated the entire skeleton package directory with my `safety_node` package.
 
-Or if you're using `docker-compose`, add an extra line `- <path_to_your_package_on_host>:/sim_ws/src/safety_node` to your `volumes` field for the `sim` container.
+## Video Showcasing how it works
 
-Note that if you're using Windows, make sure your files have Unix style line endings. You can use `dos2unix` or have correct settings in your text editor.
+Include the videos here!
 
-**Deliverable 1**: After you're finished, update the entire skeleton package directory with your `safety_node` package and directly commit and push to the repo Github classroom created for you. Your commited code should start and run in simulation smoothly.
-
-**Deliverable 2**: Make a screen cast of running your safety node in the simulation. Drive the car with keyboard teleop along the hallways of Levine, showing it doesn't brake when travelling straight in the hallway. You need to show that your safe node doesn't generate false positives. i.e. The car doesn't suddenly stop while travelling down the hallway. Then show the car driving towards a wall and braking correctly. Upload your video to YouTube (unlisted) and include a link to the video in **`SUBMISSION.md`**.
-
-## VI: Grading Rubric
-- Compilation: **30** Points
-- Provided Video: **20** Points
-- Correctly stops before collision: **30** Points
-- Correctly calculates TTC: **10** Points
-- Able to navigate through the hallway: **10** Points
+# Instructions
+ Write the instructions here for the programmers!
+ 
